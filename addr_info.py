@@ -47,12 +47,12 @@ def compare_csv_data(data: dict, path):
     for key, value in data.items(): #Find Amount-Changing
         if key in df.columns:
             if str(df[key][0]) != value:
-                text = f"""<p><b>{key}</b> amount is changed: Origin-> {df[key][0]} ， New-> {value}</p>"""
+                text = f"<p><b>{key}</b> amount is changed: Origin-> {df[key][0]} ， New-> {value}</p>"
                 text_list.append(text)
     
     #Find New or Sold
     ori_key = set(df.columns)
-    new_key = set(data.keys()) - {"ETH"}
+    new_key = set(data.keys())
     if ori_key != new_key:
         text = f"<p>{ori_key - new_key} are sold out</p>"
         text_list.append(text)
