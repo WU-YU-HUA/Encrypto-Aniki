@@ -31,8 +31,6 @@ def get_info(url):
         amount = info[2]
         value = info[3]
         token_amount[token] = str(amount)
-        # print(f"{token} : {price} * {amount} = {value}")
-        # print("========================")
     driver.quit()
     # token_amount = dict(sorted(token_amount.items()))
     return token_amount
@@ -41,9 +39,10 @@ def save_to_csv(data: dict, path):
     df = pd.DataFrame([data])
     df.to_csv(path, index=False, encoding='utf-8')
 
-def compare_csv_data(data: dict, path):
+def compare_csv_data(data: dict, path, name):
     df = pd.read_csv(path, index_col=False)
     text_list = []
+    text_list.append(f'<p style="font-size: 16px;"><b>{name}</b></p>')
     for key, value in data.items(): #Find Amount-Changing
         if key in df.columns:
             if str(df[key][0]) != value:
@@ -54,13 +53,17 @@ def compare_csv_data(data: dict, path):
     ori_key = set(df.columns)
     new_key = set(data.keys())
     if ori_key != new_key:
-        text = f"<p>{ori_key - new_key} are sold out</p>"
-        text_list.append(text)
+        text_list.append("<p><b>Buy:</b></p>")
+        boughts = sorted(new_key - ori_key)
+        for bought in boughts:
+            text_list.append(f"<p>{bought}: {data[bought]}</p>")
 
-        text = f"<p>{new_key - ori_key} are bought in</p>"
-        text_list.append(text)
+        text_list.append("<p><b>Sell:</b></p>")
+        sold = sorted(ori_key - new_key)
+        for sell in sold:
+            text_list.append(f"<p>{sell}: {df[sell][0]}</p>")
 
-    if text_list != []:
+    if len(text_list) != 1:
         send_mail(text_list)
 
 def send_mail(text: list):
@@ -96,7 +99,7 @@ url2 = ' https://debank.com/profile/0x741aa7cfb2c7bf2a1e7d4da2e3df6a56ca4131f3?c
 
 account1 = get_info(url)
 account2 = get_info(url2)
-compare_csv_data(account1, 'account1.csv')
-compare_csv_data(account2, 'account2.csv')
+compare_csv_data(account1, 'account1.csv', "Account1")
+compare_csv_data(account2, 'account2.csv', "Account2")
 save_to_csv(account1, 'account1.csv')
 save_to_csv(account2, 'account2.csv')
