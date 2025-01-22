@@ -7,7 +7,7 @@ import pandas as pd
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+import time
 
 def get_info(url):
     opt = Options()
@@ -21,7 +21,7 @@ def get_info(url):
 
     show_all = driver.find_element(By.XPATH, '//*[@id="Overview_defiItem__1e5s9"]/div[1]/div[2]/div[2]/span')
     show_all.click()
-
+    time.sleep(5)
     rows = driver.find_elements(By.CLASS_NAME, "db-table-wrappedRow")
     token_amount = dict()
     for row in rows:
